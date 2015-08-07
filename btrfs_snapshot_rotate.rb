@@ -6,7 +6,7 @@ require 'date'
 require 'optparse'
 require 'colorize' 
 
-# Snapshot sets. An array of hashed information describing different 
+# Snapshot configuration sets. An array of hashed information describing different 
 # subvolumes to snapshot.
 SnapshotConfigurations = [
 	{
