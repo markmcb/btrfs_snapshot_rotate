@@ -30,8 +30,7 @@ ActionDelete 	= 'delete'
 def prepare_desination(options={})
 	mount_points = options[:snapshot_config][:full_paths_to_mount]
 	mount_points.each do |mp|
-		%x`mount #{mp}`
-		if $?.exitstatus == 0
+		if system("mount #{mp}")
 			puts "Mounted #{mp}"
 		else
 			puts "ERROR: Unable to mount #{mp}. Check /etc/fstab and user permissions. -- Exiting."
@@ -52,8 +51,7 @@ end
 def umount_if_needed(options={})
 	mount_points = options[:snapshot_config][:full_paths_to_mount]
 	mount_points.each do |mp|
-		%x`umount #{mp}`
-		if $?.exitstatus == 0
+		if system("umount #{mp}")
 			puts "Un-mounted #{mp}"
 		else
 			puts "ERROR: Unable to umount #{mp} -- Exiting."
