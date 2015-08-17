@@ -6,6 +6,7 @@ require 'date'
 require 'optparse'
 require 'colorize' 
 
+BtrfsCommand = '/usr/sbin/btrfs'
 # Snapshot configuration sets. An array of hashed information describing different 
 # subvolumes to snapshot.
 SnapshotConfigurations = [
@@ -149,16 +150,16 @@ def process_action_list(options={})
 	options[:action_list].keys.sort.reverse.each do |k| 
 		case options[:action_list][k]
 		when ActionCreate
-			command = "btrfs subvolume snapshot -r #{options[:snapshot_config][:full_path_of_source_subvolume]} #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{options[:today].to_s}"
-			dry_run ? (puts 'CREATE: '+command) : (puts "#{command}"; system(command))
+			command = BtrfsCommand+" subvolume snapshot -r #{options[:snapshot_config][:full_path_of_source_subvolume]} #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{options[:today].to_s}"
+			dry_run ? (puts 'CREATE: '+command) : (puts command; system(command))
 		when ActionReplace
-			command = "btrfs subvolume delete --commit-after #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{options[:today].to_s}"
-			dry_run ? (puts 'REPLC1: '+command) : (puts "#{command}"; system(command))
-			command = "btrfs subvolume snapshot -r #{options[:snapshot_config][:full_path_of_source_subvolume]} #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{options[:today].to_s}"
-			dry_run ? (puts 'REPLC2: '+command) : (puts "#{command}"; system(command))
+			command = BtrfsCommand+" subvolume delete --commit-after #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{options[:today].to_s}"
+			dry_run ? (puts 'REPLC1: '+command) : (puts command; system(command))
+			command = BtrfsCommand+" subvolume snapshot -r #{options[:snapshot_config][:full_path_of_source_subvolume]} #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{options[:today].to_s}"
+			dry_run ? (puts 'REPLC2: '+command) : (puts command; system(command))
 		when ActionDelete
-			command = "btrfs subvolume delete --commit-after #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{k}"
-			dry_run ? (puts 'DELETE: '+command) : (puts "#{command}"; system(command))
+			command = BtrfsCommand+" subvolume delete --commit-after #{options[:snapshot_config][:full_path_of_snapshot_directory]}/#{options[:snapshot_config][:snapshot_filename_prefix]}-#{k}"
+			dry_run ? (puts 'DELETE: '+command) : (puts command; system(command))
 			snaps-=1
 		when ActionKeep
 			keeps+=1
